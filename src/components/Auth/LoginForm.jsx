@@ -12,60 +12,97 @@ const LoginForm = () => {
         email: '',
         password: ''
     });
+
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    
+
     const { login } = useAuth();
     const navigate = useNavigate();
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
         setError('');
     };
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
+        e.preventDefault();
+        setError('');
+        setLoading(true);
 
-    try {
-        if (isLogin) {
-            const result = await login({
-                email: formData.email,
-                password: formData.password
-            });
-            if (result.success) {
-                navigate('/');
+        try {
+
+            if (isLogin) {
+
+                const result = await login({
+                    email: formData.email,
+                    password: formData.password
+                });
+
+                if (result.success) {
+                    navigate('/');
+                } else {
+                    setError(result.message || 'Login failed');
+                }
+
             } else {
-                setError(result.message || 'Login failed');
+
+                const response = await register(formData);
+
+                if (response.data.success) {
+                    setIsLogin(true);
+                    setError('Registration successful! Please sign in.');
+                } else {
+                    setError(response.data.message || 'Registration failed');
+                }
+
             }
-        } else {
-            await register(formData);
-            setIsLogin(true);
-            setError('Registration successful! Please sign in.');
+
+        } catch (err) {
+
+            console.error(err);
+
+            setError(
+                err.response?.data?.message ||
+                err.message ||
+                'An error occurred'
+            );
+
+        } finally {
+
+            setLoading(false);
+
         }
-    } catch (err) {
-        setError(err.response?.data?.message || "An error occurred");
-    } finally {
-        setLoading(false);
-    }
-};
+    };
 
     return (
         <div className="login-container">
             <div className="login-card">
+
                 <div className="login-header">
                     <h1>📦 Inventory</h1>
+
                     <div className="tab-buttons">
-                        <button 
-                            className={isLogin ? 'active' : ''} 
-                            onClick={() => setIsLogin(true)}
+                        <button
+                            type="button"
+                            className={isLogin ? 'active' : ''}
+                            onClick={() => {
+                                setIsLogin(true);
+                                setError('');
+                            }}
                         >
                             Sign In
                         </button>
-                        <button 
-                            className={!isLogin ? 'active' : ''} 
-                            onClick={() => setIsLogin(false)}
+
+                        <button
+                            type="button"
+                            className={!isLogin ? 'active' : ''}
+                            onClick={() => {
+                                setIsLogin(false);
+                                setError('');
+                            }}
                         >
                             Sign Up
                         </button>
@@ -73,6 +110,7 @@ const LoginForm = () => {
                 </div>
 
                 <form onSubmit={handleSubmit}>
+
                     {!isLogin && (
                         <>
                             <div className="form-group">
@@ -82,9 +120,10 @@ const LoginForm = () => {
                                     name="firstname"
                                     value={formData.firstname}
                                     onChange={handleChange}
-                                    required={!isLogin}
+                                    required
                                 />
                             </div>
+
                             <div className="form-group">
                                 <label>👤 Lastname</label>
                                 <input
@@ -92,12 +131,12 @@ const LoginForm = () => {
                                     name="lastname"
                                     value={formData.lastname}
                                     onChange={handleChange}
-                                    required={!isLogin}
+                                    required
                                 />
                             </div>
                         </>
                     )}
-                    
+
                     <div className="form-group">
                         <label>✉️ Email</label>
                         <input
@@ -108,7 +147,7 @@ const LoginForm = () => {
                             required
                         />
                     </div>
-                    
+
                     <div className="form-group">
                         <label>🔒 Password</label>
                         <input
@@ -120,19 +159,40 @@ const LoginForm = () => {
                         />
                     </div>
 
-                    {error && <div className="error-message">{error}</div>}
+                    {error && (
+                        <div className="error-message">
+                            {error}
+                        </div>
+                    )}
 
-                    <button type="submit" className="submit-btn" disabled={loading}>
-                        {loading ? 'Please wait...' : (isLogin ? 'Sign In' : 'Register')}
+                    <button
+                        type="submit"
+                        className="submit-btn"
+                        disabled={loading}
+                    >
+                        {loading
+                            ? 'Please wait...'
+                            : (isLogin ? 'Sign In' : 'Register')}
                     </button>
+
                 </form>
 
                 <p className="toggle-text">
-                    {isLogin ? "Don't have an account? " : "Have an account? "}
-                    <button onClick={() => setIsLogin(!isLogin)}>
+                    {isLogin
+                        ? "Don't have an account? "
+                        : "Already have an account? "}
+
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setIsLogin(!isLogin);
+                            setError('');
+                        }}
+                    >
                         {isLogin ? 'Sign Up' : 'Login'}
                     </button>
                 </p>
+
             </div>
         </div>
     );
