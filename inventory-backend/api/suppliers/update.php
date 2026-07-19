@@ -1,0 +1,104 @@
+<?php
+// -------------------------------------------------------------
+// 1. CORS HEADERS (Allowing your actual React app ports)
+// -------------------------------------------------------------
+$allowedOrigins = [
+    "http://localhost:5173",
+    "http://localhost:5175"
+];
+
+$origin = isset($_SERVER['HTTP_ORIGIN']) ? rtrim($_SERVER['HTTP_ORIGIN'], '/') : '';
+
+if (in_array($origin, $allowedOrigins)) {
+    header("Access-Control-Allow-Origin: " . $origin);
+} else {
+    header("Access-Control-Allow-Origin: http://localhost:5173");
+}
+
+header("Access-Control-Allow-Methods: PUT, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+header("Access-Control-Allow-Credentials: true");
+header("Content-Type: application/json; charset=UTF-8");
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
+if ($_SERVER['REQUEST_METHOD'] !== 'PUT' && $_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(["success" => false, "message" => "Method not allowed. Use PUT or POST."]);
+    exit();
+}
+
+// -------------------------------------------------------------
+// 2. DATABASE CONNECTION
+// -------------------------------------------------------------
+include_once '../../config/Database.php';
+
+$database = new Database();
+$db = $database->connect();
+
+// -------------------------------------------------------------
+// 3. READ INPUT AND UPDATE SUPPLIER
+// -------------------------------------------------------------
+$data = json_decode(file_get_contents("php://input"));
+
+// Ensure the supplier ID and name are present
+if (empty($data->id) || empty($data->name)) {
+    http_response_code(400);
+    echo json_encode([
+        'success' => false, 
+        'message' => 'Supplier ID and Name are required.'
+    ]);
+    exit();
+}
+
+try {
+    $query = "UPDATE suppliers 
+              SET name = :name, 
+                  contact_person = :contact_person, 
+                  email = :email, 
+                  phone = :phone, 
+                  address = :address 
+              WHERE id = :id";
+    
+    $stmt = $db->prepare($query);
+
+    // Provide safe fallbacks so empty fields don't throw warnings
+    $id = intval($data->id);
+    $name = trim($data->name);
+    $contact_person = isset($data->contact_person) ? trim($data->contact_person) : '';
+    $email = isset($data->email) ? trim($data->email) : '';
+    $phone = isset($data->phone) ? trim($data->phone) : '';
+    $address = isset($data->address) ? trim($data->address) : '';
+
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+    $stmt->bindParam(':contact_person', $contact_person, PDO::PARAM_STR);
+    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+    $stmt->bindParam(':phone', $phone, PDO::PARAM_STR);
+    $stmt->bindParam(':address', $address, PDO::PARAM_STR);
+
+    if ($stmt->execute()) {
+        http_response_code(200);
+        echo json_encode([
+            'success' => true,
+            'message' => 'Supplier updated successfully'
+        ]);
+    } else {
+        http_response_code(500);
+        echo json_encode([
+            'success' => false, 
+            'message' => 'Failed to update supplier record.'
+        ]);
+    }
+
+} catch (PDOException $e) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false, 
+        'message' => 'Database error: ' . $e->getMessage()
+    ]);
+}
+?>
