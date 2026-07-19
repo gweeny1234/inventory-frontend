@@ -1,10 +1,10 @@
 import axios from 'axios';
 
 // for infinityfree database
-// const API_URL = "https://storeinventorysystem.infinityfreeapp.com/inventory-backend/api";
+const API_URL = "https://storeinventorysystem.infinityfreeapp.com/inventory-backend/api";
 
 // for xampp database
-const API_URL = "http://localhost/inventory-backend/api";
+// const API_URL = "http://localhost/inventory-backend/api";
 
 
 const api = axios.create({
