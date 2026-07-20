@@ -10,6 +10,7 @@ export default function LandingPage() {
   return (
     <div className="landing">
 
+      {/* Navbar */}
       <nav className="navbar">
         <h2>Inventory</h2>
 
@@ -20,54 +21,35 @@ export default function LandingPage() {
           <Link to="/login" className="login-btn">
             Log In
           </Link>
-
-          
         </div>
       </nav>
 
+      {/* Hero */}
       <section className="hero">
         <div className="hero-copy">
-          <span className="hero-eyebrow">● Live stock tracking</span>
+
+          <span className="hero-eyebrow">
+            ● Live Stock Tracking
+          </span>
 
           <h1>Know what's in stock, before it runs out.</h1>
 
           <p>
-            Manage products, categories, suppliers and orders
-            with one modern dashboard — built for teams who'd
-            rather prevent a stockout than explain one.
+            Manage products, categories, suppliers, and orders
+            with one modern dashboard built to help businesses
+            monitor inventory accurately and efficiently.
           </p>
 
           <div className="hero-buttons">
             <Link to="/login" className="primary-btn">
               Log In
             </Link>
-
-            
           </div>
-        </div>
 
-        <div className="hero-visual" aria-hidden="true">
-          <div className="preview-card">
-            <div className="preview-card-header">
-              <span><span className="preview-dot"></span>Low Stock Alert</span>
-              <span>Live</span>
-            </div>
-            <div className="preview-row">
-              <span>Laptop Computer</span>
-              <span className="low">1 left</span>
-            </div>
-            <div className="preview-row">
-              <span>Wireless Mouse</span>
-              <span className="low">1 left</span>
-            </div>
-            <div className="preview-row">
-              <span>USB-C Cable</span>
-              <span>24 left</span>
-            </div>
-          </div>
         </div>
       </section>
 
+      {/* Divider */}
       <div className="stock-divider" aria-hidden="true">
         {DIVIDER_BARS.map((bar, i) => (
           <span
@@ -78,42 +60,54 @@ export default function LandingPage() {
         ))}
       </div>
 
+      {/* Features */}
       <section id="features" className="features-wrap">
+
         <div className="features-intro">
-          <span className="features-eyebrow">What you get</span>
+          <span className="features-eyebrow">
+            What you get
+          </span>
+
           <h2>Everything the stockroom needs</h2>
+
           <p>
-            Four tools that cover the full loop — from receiving
-            stock to fulfilling the order it was bought for.
+            Four tools that cover the full inventory process,
+            from product management to order fulfillment.
           </p>
         </div>
 
         <div className="features">
+
           <div className="card">
             <h3>📦 Products</h3>
-            <p>Track every SKU, price and stock count in one searchable list.</p>
+            <p>Track every product and its stock level.</p>
           </div>
 
           <div className="card">
             <h3>🗂 Categories</h3>
-            <p>Group products so reporting and reordering stay organized.</p>
+            <p>Organize products into categories.</p>
           </div>
 
           <div className="card">
             <h3>🚚 Suppliers</h3>
-            <p>Keep contact details on hand for every restock call.</p>
+            <p>Manage supplier information and restocking.</p>
           </div>
 
           <div className="card">
             <h3>🛒 Orders</h3>
-            <p>Follow each order from pending to fulfilled, in real time.</p>
+            <p>Monitor customer orders in real time.</p>
           </div>
+
         </div>
+
       </section>
 
+      {/* Footer */}
       <footer>
         © 2026 Jen's Inventory
-        <span className="build-tag">Inventory Management System</span>
+        <span className="build-tag">
+          Inventory Management System
+        </span>
       </footer>
 
     </div>
