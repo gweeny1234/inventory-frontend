@@ -51,9 +51,12 @@ const ProductList = () => {
             fetchData();
             closeModal();
         } catch (error) {
-            console.error('Error saving product:', error);
-            alert('Failed to save product');
-        }
+    console.log(error);
+    console.log(error.response);
+    console.log(error.response?.data);
+
+    alert(JSON.stringify(error.response?.data));
+}
     };
 
     const handleDelete = async (id) => {

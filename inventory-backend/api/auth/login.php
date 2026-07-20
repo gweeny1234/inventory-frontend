@@ -18,7 +18,7 @@ if (empty($data->email) || empty($data->password)) {
 }
 
 try {
-    $query = "SELECT id, firstname, lastname, email, password, role FROM users WHERE email = :email LIMIT 1";
+    $query = "SELECT id, firstname, lastname, email, password, role FROM users WHERE BINARY email = :email LIMIT 1";
     $stmt = $db->prepare($query);
     $stmt->bindParam(':email', $data->email, PDO::PARAM_STR);
     $stmt->execute();
